@@ -48,6 +48,11 @@ class MovieRAGFlow(FlowSpec):
     def load_metadata(self):
         from tmdb_client import fetch_movies
 
+        # Ensure data_dir is set and exists
+        if not hasattr(self, 'data_dir') or self.data_dir is None:
+            self.data_dir = "data"
+        os.makedirs(self.data_dir, exist_ok=True)
+
         log(f"Fetching movies from TMDB (num_pages={self.num_pages})...")
         movies = fetch_movies(num_pages=self.num_pages)
         log(f"Fetched {len(movies)} movies")
@@ -111,6 +116,11 @@ class MovieRAGFlow(FlowSpec):
         import numpy as np
         from openai import OpenAI
 
+        # Ensure data_dir is set and exists
+        if not hasattr(self, 'data_dir') or self.data_dir is None:
+            self.data_dir = "data"
+        os.makedirs(self.data_dir, exist_ok=True)
+
         log(f"Embedding {len(self.docs)} movies...")
         client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
@@ -151,6 +161,11 @@ class MovieRAGFlow(FlowSpec):
         import faiss
         import numpy as np
 
+        # Ensure data_dir is set and exists
+        if not hasattr(self, 'data_dir') or self.data_dir is None:
+            self.data_dir = "data"
+        os.makedirs(self.data_dir, exist_ok=True)
+
         log("Building FAISS index...")
         vecs = self.embeddings
         d = vecs.shape[1]
@@ -176,18 +191,38 @@ class MovieRAGFlow(FlowSpec):
         import faiss
         from openai import OpenAI
 
+        # Ensure data_dir and embedding_model are set (in case this step runs independently)
+        if not hasattr(self, 'data_dir') or self.data_dir is None:
+            self.data_dir = "data"
+        os.makedirs(self.data_dir, exist_ok=True)
+        if not hasattr(self, 'embedding_model') or self.embedding_model is None:
+            self.embedding_model = "text-embedding-3-small"
+        
         log(f"Finding recommendations for: {self.query_title}")
         # Load from disk in case this step runs independently
         index_path = os.path.join(self.data_dir, "index.faiss")
         mapping_path = os.path.join(self.data_dir, "id_mapping.pkl")
 
+        # Load FAISS index if it exists
         if os.path.exists(index_path):
             self.faiss_index = faiss.read_index(index_path)
             log(f"Loaded FAISS index from disk ({self.faiss_index.ntotal} vectors)")
+        elif not hasattr(self, 'faiss_index') or self.faiss_index is None:
+            raise FileNotFoundError(
+                f"FAISS index not found at {index_path}. "
+                "Please run the flow from the beginning to generate the index."
+            )
+        
+        # Load id_mapping if it exists
         if os.path.exists(mapping_path):
             with open(mapping_path, "rb") as f:
                 self.id_mapping = pickle.load(f)
             log(f"Loaded id_mapping from disk ({len(self.id_mapping)} entries)")
+        elif not hasattr(self, 'id_mapping') or self.id_mapping is None:
+            raise FileNotFoundError(
+                f"ID mapping not found at {mapping_path}. "
+                "Please run the flow from the beginning to generate the mapping."
+            )
 
         # Reconstruct docs from id_mapping if not already loaded
         if not hasattr(self, 'docs') or self.docs is None:

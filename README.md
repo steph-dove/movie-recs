@@ -58,5 +58,13 @@ python3 flow.py run --num_pages 5 --query_title "Arrival" --top_k 5
 When you run the flow, you'll see recommendations and an explanation like this:
 
 ```
-In terms of mood and tone, these movies balance tension and introspection, allowing for moments of suspense while also delving into the characters' emotional journeys. *Predator* and *War of the Worlds* bring a thrilling edge with their action-packed sequences, but they also explore the fear of the unknown and humanity's response to it, similar to *Arrival*. The pacing of these films often builds steadily, drawing viewers into their worlds before launching into intense climaxes, which keeps you engaged and on the edge of your seat. Plus, they all fall within the realm of science fiction, blending adventure and existential themes, making them a great fit for anyone who enjoys thought-provoking narratives with a touch of excitement.
+In terms of mood and tone, these movies balance tension and introspection, allowing for 
+moments of suspense while also delving into the characters' emotional journeys. *Predator* 
+and *War of the Worlds* bring a thrilling edge with their action-packed sequences, but they 
+also explore the fear of the unknown and humanity's response to it, similar to *Arrival*. 
+The pacing of these films often builds steadily, drawing viewers into their worlds before 
+launching into intense climaxes, which keeps you engaged and on the edge of your seat. Plus, 
+they all fall within the realm of science fiction, blending adventure and existential themes, 
+making them a great fit for anyone who enjoys thought-provoking narratives with a touch of 
+excitement.
 ```
