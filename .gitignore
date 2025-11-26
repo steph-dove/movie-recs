@@ -1,0 +1,5 @@
+.env
+.metaflow/
+__pycache__/
+*.pyc
+data/
